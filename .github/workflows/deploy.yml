@@ -23,7 +23,23 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Deploy to Server
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
+          chmod 600 ~/.ssh/staging_key
+
+      - name: Deploy via Rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.astro' \
+            ./dist/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/
+
+      - name: Verify Deployment
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
@@ -31,12 +47,5 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
-            mkdir -p /home/web/projects/staging/myweb/dist
-            rsync -avz --delete \
-              -e "ssh -o StrictHostKeyChecking=no" \
-              --exclude='.git' \
-              --exclude='.github' \
-              --exclude='node_modules' \
-              --exclude='.astro' \
-              ./dist/ /home/web/projects/staging/myweb/dist/
+            ls -la /home/web/projects/staging/myweb/
             echo "Deployment completed at $(date)"
