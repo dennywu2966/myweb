@@ -10,6 +10,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,10 +41,5 @@ jobs:
               --exclude='node_modules' \
               --exclude='.astro' \
               ./dist/ $STAGING_PATH/
-            
-            # Restart docker container if it exists, otherwise start it
-            cd $STAGING_PATH/infra/docker
-            docker compose down 2>/dev/null || true
-            docker compose up -d --pull always
-            
+
             echo "Deployment completed at $(date)"
