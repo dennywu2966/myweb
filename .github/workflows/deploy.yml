@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Deploy to Staging via SSH
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
@@ -31,11 +31,12 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
-            ssh $STAGING_USER@$STAGING_HOST "mkdir -p /home/web/projects/staging/myweb"
+            mkdir -p /home/web/projects/staging/myweb/dist
             rsync -avz --delete \
+              -e "ssh -o StrictHostKeyChecking=no" \
               --exclude='.git' \
               --exclude='.github' \
               --exclude='node_modules' \
               --exclude='.astro' \
-              ./dist/ $STAGING_USER@$STAGING_HOST:/home/web/projects/staging/myweb/
+              ./dist/ /home/web/projects/staging/myweb/dist/
             echo "Deployment completed at $(date)"
