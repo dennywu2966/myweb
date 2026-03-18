@@ -3,10 +3,20 @@ import Base from '@/layouts/Base.astro';
 import BlogCard from '@/components/BlogCard.astro';
 import NoteCard from '@/components/NoteCard.astro';
 import { getCollection } from 'astro:content';
+import { BASE_PATH } from '@/lib/base';
 
-const posts = (await getCollection('blog'))
+const allPosts = await getCollection('blog');
+
+const pinnedPosts = allPosts
+  .filter((post) => post.data.pinned)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const recentPosts = allPosts
+  .filter((post) => !post.data.pinned)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 5);
+  .slice(0, 3);
+
+const featuredPosts = [...pinnedPosts, ...recentPosts].slice(0, 6);
 
 const notes = (await getCollection('notes'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -30,19 +40,19 @@ const notes = (await getCollection('notes'))
       </div>
       
       <div class="mt-6 flex gap-4 text-sm">
-        <a href="/about" class="text-primary-600 dark:text-primary-400 hover:underline">关于我</a>
-        <a href="/blog" class="text-primary-600 dark:text-primary-400 hover:underline">文章</a>
-        <a href="/notes" class="text-primary-600 dark:text-primary-400 hover:underline">Notes</a>
+        <a href={`${BASE_PATH}/about`} class="text-primary-600 dark:text-primary-400 hover:underline">关于我</a>
+        <a href={`${BASE_PATH}/blog`} class="text-primary-600 dark:text-primary-400 hover:underline">文章</a>
+        <a href={`${BASE_PATH}/notes`} class="text-primary-600 dark:text-primary-400 hover:underline">Notes</a>
       </div>
     </section>
 
     <section class="mb-12">
       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold">文章</h2>
-        <a href="/blog" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
+        <h2 class="text-lg font-semibold">精选</h2>
+        <a href={`${BASE_PATH}/blog`} class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
       </div>
       <div class="divide-y divide-[var(--color-border)]">
-        {posts.map((post) => (
+        {featuredPosts.map((post) => (
           <BlogCard post={post} />
         ))}
       </div>
@@ -51,7 +61,7 @@ const notes = (await getCollection('notes'))
     <section>
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold">Notes</h2>
-        <a href="/notes" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
+        <a href={`${BASE_PATH}/notes`} class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
       </div>
       <div class="space-y-1">
         {notes.map((note) => (

@@ -1,6 +1,7 @@
 ---
 import { formatDate, readingTime } from '@/lib/utils';
 import type { CollectionEntry } from 'astro:content';
+import { BASE_PATH } from '@/lib/base';
 
 interface Props {
   post: CollectionEntry<'blog'>;
@@ -11,7 +12,7 @@ const { title, description, pubDate, tags } = post.data;
 ---
 
 <article class="group">
-  <a href={`/blog/${post.slug}`} class="block py-4">
+  <a href={`${BASE_PATH}/blog/${post.slug}`} class="block py-4">
     <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2">
       <h3 class="font-medium group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
         {title}

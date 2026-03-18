@@ -2,13 +2,14 @@
 import Base from './Base.astro';
 import { formatDate, readingTime } from '@/lib/utils';
 import type { CollectionEntry } from 'astro:content';
+import { BASE_PATH } from '@/lib/base';
 
 interface Props {
   post: CollectionEntry<'blog'>;
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, tags, heroImage, pinned } = post.data;
+const { title, description, pubDate, tags, pinned } = post.data;
 ---
 
 <Base title={`${title} | Denny`} description={description}>
@@ -35,7 +36,7 @@ const { title, description, pubDate, tags, heroImage, pinned } = post.data;
             <span>·</span>
             <div class="flex gap-2">
               {tags.map((tag) => (
-                <a href={`/tags/${tag}`} class="hover:text-primary-600 dark:hover:text-primary-400">
+                <a href={`${BASE_PATH}/tags/${tag}`} class="hover:text-primary-600 dark:hover:text-primary-400">
                   #{tag}
                 </a>
               ))}
@@ -51,7 +52,7 @@ const { title, description, pubDate, tags, heroImage, pinned } = post.data;
 
     <nav class="mt-12 pt-8 border-t border-[var(--color-border)]">
       <div class="flex justify-between text-sm">
-        <a href="/blog" class="text-primary-600 dark:text-primary-400 hover:underline">
+        <a href={`${BASE_PATH}/blog`} class="text-primary-600 dark:text-primary-400 hover:underline">
           ← 返回文章列表
         </a>
       </div>

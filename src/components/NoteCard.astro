@@ -1,6 +1,7 @@
 ---
 import { formatDateShort } from '@/lib/utils';
 import type { CollectionEntry } from 'astro:content';
+import { BASE_PATH } from '@/lib/base';
 
 interface Props {
   note: CollectionEntry<'notes'>;
@@ -26,7 +27,7 @@ const { title, date, tags, link } = note.data;
             </svg>
           </a>
         ) : (
-          <a href={`/notes/${note.slug}`}>{title}</a>
+          <a href={`${BASE_PATH}/notes/${note.slug}`}>{title}</a>
         )}
       </h3>
     )}

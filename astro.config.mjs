@@ -2,8 +2,13 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import tailwind from '@astrojs/tailwind';
 
+const BASE_PATH = process.env.BASE_PATH || '/staging';
+
 export default defineConfig({
-  site: 'https://denny.example.com',
+  site: BASE_PATH === '/staging' 
+    ? 'https://www.winter-prospect.com/staging' 
+    : 'https://www.winter-prospect.com',
+  base: BASE_PATH,
   integrations: [
     mdx(),
     tailwind()

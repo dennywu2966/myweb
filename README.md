@@ -34,6 +34,12 @@ bun run build
 bun run preview
 ```
 
+### 类型检查
+
+```bash
+bun run check
+```
+
 ## 项目结构
 
 ```
@@ -66,6 +72,7 @@ title: "文章标题"
 description: "文章描述"
 pubDate: 2024-01-01
 tags: ["tag1", "tag2"]
+pinned: true  # 可选，置顶文章
 ---
 
 文章内容...
@@ -85,6 +92,8 @@ link: "https://..." # 可选外部链接
 
 笔记内容...
 ```
+
+Notes 支持 Wiki-style 双链语法：`[[note-slug]]` 或 `[[note-slug|显示文本]]`
 
 ### 添加项目
 
@@ -118,54 +127,57 @@ url: "https://..." # 可选slides链接
 
 ## 部署
 
-### Docker 本地构建
+### 环境
 
-```bash
-cd infra/docker
-docker compose up -d
-```
-
-### 远程服务器部署
-
-```bash
-# 首次部署
-ssh user@server
-cd /opt/denny-site
-git clone https://github.com/denny/denny-site.git .
-docker compose up -d
-
-# 更新部署
-git pull
-docker compose up -d --build
-```
+| 环境 | URL | 说明 |
+|------|-----|------|
+| 本地开发 | http://localhost:4321 | `bun run dev` |
+| Staging | https://www.winter-prospect.com/staging | main 分支自动部署 |
 
 ### GitHub Actions 自动部署
 
-推送到 main 分支自动触发构建和部署。
+PR 合并到 `main` 分支后自动触发部署到 staging 环境。
 
-需要配置的 GitHub Secrets：
+#### 需配置的 GitHub Secrets
 
-| Secret | 说明 |
-|--------|------|
-| `ECS_HOST` | ECS 服务器 IP |
-| `ECS_USER` | SSH 用户名 |
-| `ECS_SSH_KEY` | SSH 私钥 |
+| Secret | 说明 | 示例值 |
+|--------|------|--------|
+| `STAGING_HOST` | 服务器地址 | `www.winter-prospect.com` |
+| `STAGING_USER` | SSH 用户名 | `web` |
+| `STAGING_SSH_KEY` | SSH 私钥 | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
 
-### 部署流程
+#### 首次部署步骤
 
-1. 代码推送到 `main` 分支
-2. GitHub Actions 自动构建 Docker 镜像
-3. 镜像推送到 GitHub Container Registry
-4. SSH 登录 ECS 服务器
-5. 服务器拉取新镜像并重启容器
+1. SSH 登录服务器：`ssh web@www.winter-prosper.com`
+2. 创建目录：`mkdir -p ~/projects/staging/myweb`
+3. 运行服务器初始化脚本（需要 sudo）：
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/dennywu2966/myweb/main/infra/server-setup.sh | bash
+   ```
+4. 确保域名 proxy 已配置：将 `/staging` 路由到服务器的 port 8080
 
-### 回滚
+#### 部署流程
+
+1. 创建 PR 并合并到 `main` 分支
+2. GitHub Actions 自动：
+   - 检出代码
+   - 安装 bun 依赖
+   - 构建静态文件 (`dist/`)
+   - 通过 SSH rsync 同步到 `~/projects/staging/myweb/dist/`
+   - 重启 Docker 容器
+
+### Docker 自愈与自启动
+
+Staging 环境使用 `restart: always` 策略：
+- 服务器重启后容器自动启动
+- 容器崩溃后自动重启
+- 使用 nginx:alpine 镜像，保持轻量
+
+### 本地手动部署
 
 ```bash
-ssh user@server
-cd /opt/denny-site
-docker compose pull
-docker compose up -d
+# 同步 dist 到 staging 服务器
+rsync -avz --delete ./dist/ web@www.winter-prosper.com:~/projects/staging/myweb/dist/
 ```
 
 ## 功能特性
@@ -176,7 +188,6 @@ docker compose up -d
 - Sitemap
 - SEO 优化
 - Open Graph / Twitter Card
-- 支持 Wiki-style 双链语法 `[[note-slug]]`
 
 ## License
 

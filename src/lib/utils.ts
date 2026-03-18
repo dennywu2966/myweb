@@ -31,7 +31,7 @@ export function readingTime(content: string): number {
 }
 
 export function parseWikiLinks(content: string): string {
-  return content.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (match, slug, text) => {
+  return content.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_match, slug, text) => {
     const displayText = text || slug;
     const href = `/notes/${slugify(slug)}`;
     return `[${displayText}](${href})`;
