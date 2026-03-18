@@ -4,9 +4,6 @@ on:
   push:
     branches: [main]
 
-env:
-  STAGING_PATH: /home/web/projects/staging/myweb
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -34,12 +31,11 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
-            mkdir -p $STAGING_PATH
+            ssh $STAGING_USER@$STAGING_HOST "mkdir -p /home/web/projects/staging/myweb"
             rsync -avz --delete \
               --exclude='.git' \
               --exclude='.github' \
               --exclude='node_modules' \
               --exclude='.astro' \
-              ./dist/ $STAGING_PATH/
-
+              ./dist/ $STAGING_USER@$STAGING_HOST:/home/web/projects/staging/myweb/
             echo "Deployment completed at $(date)"
