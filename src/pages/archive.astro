@@ -1,0 +1,39 @@
+---
+import Base from '@/layouts/Base.astro';
+import BlogCard from '@/components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const postsByYear = posts.reduce((acc, post) => {
+  const year = post.data.pubDate.getFullYear();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(post);
+  return acc;
+}, {} as Record<number, typeof posts>);
+
+const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
+---
+
+<Base title="归档 | Denny" description="所有文章的年份归档">
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <header class="mb-8">
+      <h1 class="text-2xl font-bold mb-2">归档</h1>
+      <p class="text-[var(--color-text-muted)]">按年份整理的所有文章。</p>
+    </header>
+    
+    <div class="space-y-10">
+      {years.map((year) => (
+        <section>
+          <h2 class="text-lg font-semibold mb-4 text-primary-600 dark:text-primary-400">{year}</h2>
+          <div class="divide-y divide-[var(--color-border)]">
+            {postsByYear[Number(year)].map((post) => (
+              <BlogCard post={post} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+</Base>

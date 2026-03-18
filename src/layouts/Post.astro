@@ -1,0 +1,60 @@
+---
+import Base from './Base.astro';
+import { formatDate, readingTime } from '@/lib/utils';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags, heroImage, pinned } = post.data;
+---
+
+<Base title={`${title} | Denny`} description={description}>
+  <article class="max-w-3xl mx-auto px-4 py-12">
+    {pinned && (
+      <div class="mb-6 text-sm text-primary-600 dark:text-primary-400 font-medium">
+        置顶文章
+      </div>
+    )}
+    
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+        {title}
+      </h1>
+      
+      <div class="flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)]">
+        <time datetime={pubDate.toISOString()}>
+          {formatDate(pubDate)}
+        </time>
+        <span>·</span>
+        <span>{readingTime(post.body)} 分钟阅读</span>
+        {tags && tags.length > 0 && (
+          <>
+            <span>·</span>
+            <div class="flex gap-2">
+              {tags.map((tag) => (
+                <a href={`/tags/${tag}`} class="hover:text-primary-600 dark:hover:text-primary-400">
+                  #{tag}
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </header>
+
+    <div class="prose-custom">
+      <slot />
+    </div>
+
+    <nav class="mt-12 pt-8 border-t border-[var(--color-border)]">
+      <div class="flex justify-between text-sm">
+        <a href="/blog" class="text-primary-600 dark:text-primary-400 hover:underline">
+          ← 返回文章列表
+        </a>
+      </div>
+    </nav>
+  </article>
+</Base>

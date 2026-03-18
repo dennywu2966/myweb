@@ -1,0 +1,27 @@
+---
+title: "Now | Denny"
+description: "现在在做什么"
+---
+
+<Base title="Now | Denny" description="现在在做什么">
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <header class="mb-8">
+      <h1 class="text-2xl font-bold mb-2">Now</h1>
+      <p class="text-[var(--color-text-muted)] text-sm">最后更新于 2024 年 3 月</p>
+    </header>
+    
+    <article class="prose-custom">
+      <h2>工作</h2>
+      <p>继续做搜索和 AI 基础设施相关的事情。最近在研究 Agent memory 系统的设计和实现。</p>
+      
+      <h2>学习</h2>
+      <p>Agents 和 memory 相关的东西。看看不同系统是怎么处理长期记忆的。</p>
+      
+      <h2>项目</h2>
+      <p>维护 <code>agent-memory-harness</code>，准备把之前的一些笔记整理成文章。</p>
+      
+      <h2>生活</h2>
+      <p>尽量保持规律作息，多运动。</p>
+    </article>
+  </div>
+</Base>

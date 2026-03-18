@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://denny.example.com/sitemap-index.xml

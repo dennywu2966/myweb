@@ -1,0 +1,77 @@
+---
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import { siteConfig } from '@/lib/config';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  article?: boolean;
+}
+
+const { title, description = siteConfig.description, ogImage, article = false } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang={siteConfig.lang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href={canonicalURL} />
+    
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={siteConfig.author} />
+    
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:locale" content="zh_CN" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={`@${siteConfig.twitter}`} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    
+    <link rel="alternate" type="application/rss+xml" title={siteConfig.title} href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Notes RSS" href="/notes/rss.xml" />
+    
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="robots" href="/robots.txt" />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  @import '@/styles/global.css';
+</style>
