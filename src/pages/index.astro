@@ -27,7 +27,7 @@ const notes = (await getCollection('notes'))
   <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
     <section class="mb-16">
       <h1 class="text-2xl md:text-3xl font-bold mb-4">Denny</h1>
-      
+
       <div class="space-y-3 text-[var(--color-text-muted)] leading-relaxed">
         <p>
           我在做搜索、AI 基础设施和复杂工程系统，也持续记录思考。
@@ -38,18 +38,18 @@ const notes = (await getCollection('notes'))
           这里会放我的文章、notes、项目，以及一些还没有长成正式文章的想法。
         </p>
       </div>
-      
+
       <div class="mt-6 flex gap-4 text-sm">
-        <a href={`${BASE_PATH}/about`} class="text-primary-600 dark:text-primary-400 hover:underline">关于我</a>
-        <a href={`${BASE_PATH}/blog`} class="text-primary-600 dark:text-primary-400 hover:underline">文章</a>
-        <a href={`${BASE_PATH}/notes`} class="text-primary-600 dark:text-primary-400 hover:underline">Notes</a>
+        <a href={`${BASE_PATH}/about`} class="text-[var(--color-accent)] hover:underline">关于我</a>
+        <a href={`${BASE_PATH}/blog`} class="text-[var(--color-accent)] hover:underline">文章</a>
+        <a href={`${BASE_PATH}/notes`} class="text-[var(--color-accent)] hover:underline">Notes</a>
       </div>
     </section>
 
     <section class="mb-12">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold">精选</h2>
-        <a href={`${BASE_PATH}/blog`} class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
+        <a href={`${BASE_PATH}/blog`} class="text-sm text-[var(--color-accent)] hover:underline">查看全部 →</a>
       </div>
       <div class="divide-y divide-[var(--color-border)]">
         {featuredPosts.map((post) => (
@@ -61,7 +61,7 @@ const notes = (await getCollection('notes'))
     <section>
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-lg font-semibold">Notes</h2>
-        <a href={`${BASE_PATH}/notes`} class="text-sm text-primary-600 dark:text-primary-400 hover:underline">查看全部 →</a>
+        <a href={`${BASE_PATH}/notes`} class="text-sm text-[var(--color-accent)] hover:underline">查看全部 →</a>
       </div>
       <div class="space-y-1">
         {notes.map((note) => (

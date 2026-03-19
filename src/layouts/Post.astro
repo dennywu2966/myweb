@@ -15,16 +15,16 @@ const { title, description, pubDate, tags, pinned } = post.data;
 <Base title={`${title} | Denny`} description={description}>
   <article class="max-w-3xl mx-auto px-4 py-12">
     {pinned && (
-      <div class="mb-6 text-sm text-primary-600 dark:text-primary-400 font-medium">
+      <div class="mb-6 text-sm text-[var(--color-accent)] font-medium">
         置顶文章
       </div>
     )}
-    
+
     <header class="mb-8">
       <h1 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">
         {title}
       </h1>
-      
+
       <div class="flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)]">
         <time datetime={pubDate.toISOString()}>
           {formatDate(pubDate)}
@@ -36,7 +36,7 @@ const { title, description, pubDate, tags, pinned } = post.data;
             <span>·</span>
             <div class="flex gap-2">
               {tags.map((tag) => (
-                <a href={`${BASE_PATH}/tags/${tag}`} class="hover:text-primary-600 dark:hover:text-primary-400">
+                <a href={`${BASE_PATH}/tags/${tag}`} class="hover:text-[var(--color-accent)]">
                   #{tag}
                 </a>
               ))}
@@ -52,7 +52,7 @@ const { title, description, pubDate, tags, pinned } = post.data;
 
     <nav class="mt-12 pt-8 border-t border-[var(--color-border)]">
       <div class="flex justify-between text-sm">
-        <a href={`${BASE_PATH}/blog`} class="text-primary-600 dark:text-primary-400 hover:underline">
+        <a href={`${BASE_PATH}/blog`} class="text-[var(--color-accent)] hover:underline">
           ← 返回文章列表
         </a>
       </div>

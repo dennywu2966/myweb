@@ -5,18 +5,6 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-        },
         neutral: {
           50: '#fafafa',
           100: '#f5f5f5',
@@ -41,7 +29,7 @@ export default {
             maxWidth: '72ch',
             '--tw-prose-body': theme('colors.neutral[700]'),
             '--tw-prose-headings': theme('colors.neutral[900]'),
-            '--tw-prose-links': theme('colors.primary[600]'),
+            '--tw-prose-links': 'var(--color-accent)',
             '--tw-prose-code': theme('colors.neutral[800]'),
             '--tw-prose-pre-bg': theme('colors.neutral[850]'),
             'code::before': { content: '""' },
@@ -52,7 +40,7 @@ export default {
           css: {
             '--tw-prose-body': theme('colors.neutral[300]'),
             '--tw-prose-headings': theme('colors.neutral[50]'),
-            '--tw-prose-links': theme('colors.primary[400]'),
+            '--tw-prose-links': 'var(--color-accent)',
             '--tw-prose-code': theme('colors.neutral[200]'),
             '--tw-prose-pre-bg': theme('colors.neutral[900]'),
           },

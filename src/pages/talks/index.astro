@@ -18,7 +18,7 @@ const talks = (await getCollection('talks'))
         <article class="group">
           <div class="flex items-start justify-between gap-4">
             <div>
-              <h3 class="font-semibold group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              <h3 class="font-semibold group-hover:text-[var(--color-accent)] transition-colors">
                 {talk.data.url ? (
                   <a href={talk.data.url} target="_blank" rel="noopener noreferrer" class="flex items-center gap-1">
                     {talk.data.title}

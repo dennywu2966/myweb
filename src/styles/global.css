@@ -8,19 +8,19 @@
   :root {
     --color-bg: #fafafa;
     --color-text: #171717;
-    --color-text-muted: #525252;
+    --color-text-muted: #6b7280;
     --color-border: #e5e5e5;
-    --color-accent: #0ea5e9;
+    --color-accent: #64748b;
     --color-code-bg: #f5f5f5;
   }
 
   .dark {
-    --color-bg: #171717;
+    --color-bg: #0f0f0f;
     --color-text: #fafafa;
-    --color-text-muted: #a3a3a3;
+    --color-text-muted: #9ca3af;
     --color-border: #262626;
-    --color-accent: #38bdf8;
-    --color-code-bg: #262626;
+    --color-accent: #94a3b8;
+    --color-code-bg: #1a1a1a;
   }
 
   html {
@@ -33,13 +33,21 @@
   }
 
   ::selection {
-    @apply bg-primary-200 dark:bg-primary-800;
+    @apply bg-neutral-200 dark:bg-neutral-700;
   }
 }
 
 @layer components {
   .prose-custom {
     @apply prose prose-neutral dark:prose-invert max-w-none;
+  }
+
+  .prose-custom a {
+    @apply text-[var(--color-accent)] no-underline border-b border-[var(--color-accent)] border-opacity-40 hover:border-opacity-100 transition-all;
+  }
+
+  .prose-custom code {
+    @apply bg-[var(--color-code-bg)] px-1.5 py-0.5 rounded text-sm;
   }
 
   .link-underline {
@@ -52,10 +60,6 @@
 
   .link-underline:hover::after {
     @apply w-full;
-  }
-
-  .note-link {
-    @apply text-primary-600 dark:text-primary-400 hover:underline decoration-dotted underline-offset-4;
   }
 }
 

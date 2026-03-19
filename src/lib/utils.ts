@@ -1,13 +1,3 @@
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
-}
-
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('zh-CN', {
     year: 'numeric',
