@@ -29,6 +29,13 @@ jobs:
           echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
           chmod 600 ~/.ssh/staging_key
 
+      - name: Ensure Directory Structure Exists
+        run: |
+          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
+            mkdir -p /home/web/projects/staging/myweb/infra/docker
+            mkdir -p /home/web/projects/staging/myweb/dist
+          ENDSSH
+
       - name: Deploy to Server
         run: |
           rsync -avz --delete \
