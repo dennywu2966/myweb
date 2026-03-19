@@ -30,10 +30,3 @@ export function readingTime(content: string): number {
   return Math.ceil(words / wordsPerMinute);
 }
 
-export function parseWikiLinks(content: string): string {
-  return content.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_match, slug, text) => {
-    const displayText = text || slug;
-    const href = `/notes/${slugify(slug)}`;
-    return `[${displayText}](${href})`;
-  });
-}

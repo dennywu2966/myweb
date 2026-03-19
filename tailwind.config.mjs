@@ -32,8 +32,8 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Geist', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+        mono: ['Geist Mono', 'Fira Code', 'monospace'],
       },
       typography: ({ theme }) => ({
         DEFAULT: {
