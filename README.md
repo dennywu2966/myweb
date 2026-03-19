@@ -132,7 +132,7 @@ url: "https://..." # 可选slides链接
 | 环境 | URL | 说明 |
 |------|-----|------|
 | 本地开发 | http://localhost:4321 | `bun run dev` |
-| Staging | https://www.winter-prospect.com/staging | main 分支自动部署 |
+| Staging | https://www.winter-prosper.com/staging | main 分支自动部署 |
 
 ### GitHub Actions 自动部署
 
@@ -142,7 +142,7 @@ PR 合并到 `main` 分支后自动触发部署到 staging 环境。
 
 | Secret | 说明 | 示例值 |
 |--------|------|--------|
-| `STAGING_HOST` | 服务器地址 | `www.winter-prospect.com` |
+| `STAGING_HOST` | 服务器地址 | `www.winter-prosper.com` |
 | `STAGING_USER` | SSH 用户名 | `web` |
 | `STAGING_SSH_KEY` | SSH 私钥 | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
 

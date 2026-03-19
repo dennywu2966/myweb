@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.winter-prospect.com/staging/sitemap.xml
+Sitemap: https://www.winter-prosper.com/staging/sitemap.xml

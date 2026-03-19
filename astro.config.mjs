@@ -6,8 +6,8 @@ const BASE_PATH = process.env.BASE_PATH || '/staging';
 
 export default defineConfig({
   site: BASE_PATH === '/staging' 
-    ? 'https://www.winter-prospect.com/staging' 
-    : 'https://www.winter-prospect.com',
+    ? 'https://www.winter-prosper.com/staging' 
+    : 'https://www.winter-prosper.com',
   base: BASE_PATH,
   integrations: [
     mdx(),

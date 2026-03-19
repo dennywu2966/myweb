@@ -5,7 +5,7 @@
 set -e
 
 echo "=== Denny Personal Site - Staging Server Setup ==="
-echo "Target: https://www.winter-prospect.com/staging"
+echo "Target: https://www.winter-prosper.com/staging"
 echo ""
 
 STAGING_DIR="/home/web/projects/staging/myweb"
@@ -19,7 +19,7 @@ mkdir -p $STAGING_DIR/dist
 echo ""
 echo "=== GitHub Actions SSH Key Setup ==="
 echo "Make sure you have added the following secrets to your GitHub repository:"
-echo "  STAGING_HOST: www.winter-prospect.com"
+echo "  STAGING_HOST: www.winter-prosper.com"
 echo "  STAGING_USER: web"
 echo "  STAGING_SSH_KEY: Your SSH private key"
 echo ""
@@ -89,8 +89,8 @@ echo ""
 echo "=== Setup Complete ==="
 echo ""
 echo "Next steps:"
-echo "1. Make sure www.winter-prospect.com has nginx/proxy routing /staging to port 8080"
+echo "1. Make sure www.winter-prosper.com has nginx/proxy routing /staging to port 8080"
 echo "2. Initial deployment will happen automatically when you push to main branch"
-echo "3. Or manually: rsync -avz ./dist/ web@www.winter-prospect.com:~/projects/staging/myweb/dist/"
+echo "3. Or manually: rsync -avz ./dist/ web@www.winter-prosper.com:~/projects/staging/myweb/dist/"
 echo ""
 echo "Docker auto-start and self-healing is configured (restart: always)"
