@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Deploy Files
+      - name: Deploy to Server
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
@@ -32,5 +32,4 @@ jobs:
           port: 22
           script: |
             cd /home/web/projects/staging/myweb
-            mkdir -p dist
-            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='.astro' ./dist/ ./
+            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='.astro' ./dist/ ./dist/
