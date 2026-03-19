@@ -51,12 +51,3 @@ jobs:
           rsync -avz \
             -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
             ./infra/docker/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/infra/docker/
-
-      - name: Setup and Restart Docker Container
-        run: |
-          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
-            cd /home/web/projects/staging/myweb/infra/docker
-            docker compose down 2>/dev/null || true
-            docker compose up -d --pull always
-            docker ps
-          ENDSSH
