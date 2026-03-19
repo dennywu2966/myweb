@@ -23,13 +23,18 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Setup SSH Key for Rsync
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
+          chmod 600 ~/.ssh/staging_key
+
       - name: Deploy to Server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          key: ${{ secrets.STAGING_SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/web/projects/staging/myweb
-            rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" --exclude='.git' --exclude='.github' --exclude='node_modules' --exclude='.astro' ./dist/ ./dist/
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.astro' \
+            ./dist/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/dist/
