@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Deploy Files
+      - name: Deploy Files and Configure Nginx
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
@@ -32,21 +32,21 @@ jobs:
           port: 22
           script: |
             cd /home/web/projects/staging/myweb
-            mkdir -p dist
-            # Sync files
-            rsync -avz --delete \
-              -e "ssh -o StrictHostKeyChecking=no" \
-              --exclude='.git' \
-              --exclude='.github' \
-              --exclude='node_modules' \
-              --exclude='.astro' \
-              ./dist/ ./dist/
-            # Check if nginx is available
-            if command -v nginx &> /dev/null; then
-              echo "Nginx is available"
-            else
-              echo "Nginx not found"
-            fi
-            # List files
-            ls -la
-            echo "Deployment completed at $(date)"
+            cat > staging.conf << 'EOF'
+server {
+    listen 8080;
+    server_name localhost;
+    root /home/web/projects/staging/myweb;
+    index index.html;
+    location / {
+        try_files $uri $uri/ $uri.html =404;
+    }
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+}
+EOF
+            sudo cp staging.conf /etc/nginx/sites-available/staging
+            sudo ln -sf /etc/nginx/sites-available/staging /etc/nginx/sites-enabled/staging
+            sudo nginx -t && sudo nginx -s reload || sudo nginx
