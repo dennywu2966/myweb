@@ -39,7 +39,7 @@ jobs:
             --exclude='.astro' \
             ./dist/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/
 
-      - name: Verify Deployment
+      - name: Create Docker Config
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
@@ -47,5 +47,31 @@ jobs:
           key: ${{ secrets.STAGING_SSH_KEY }}
           port: 22
           script: |
-            ls -la /home/web/projects/staging/myweb/
-            echo "Deployment completed at $(date)"
+            cd /home/web/projects/staging/myweb
+            printf '%s\n' 'services:' '  web:' '    image: nginx:alpine' '    ports:' '      - "8080:80"' '    volumes:' '      - ./dist:/usr/share/nginx/html:ro' '      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro' '    restart: always' > docker-compose.yml
+
+      - name: Create Nginx Config
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/web/projects/staging/myweb
+            printf '%s\n' 'server {' '    listen 80;' '    server_name localhost;' '    root /usr/share/nginx/html;' '    index index.html;' '    location /staging/ {' '        alias /usr/share/nginx/html/;' '        try_files $uri $uri/ $uri.html =404;' '    }' '    gzip on;' '    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;' '}' > nginx.conf
+
+      - name: Start Container
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/web/projects/staging/myweb
+            docker compose down 2>/dev/null || true
+            docker compose up -d
+            sleep 3
+            docker compose ps
+            echo "Done at $(date)"
