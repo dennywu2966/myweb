@@ -46,8 +46,24 @@ jobs:
             --exclude='.astro' \
             ./dist/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/dist/
 
-      - name: Deploy Docker Config
+      - name: Deploy Infrastructure Config
         run: |
           rsync -avz \
             -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
             ./infra/docker/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/infra/docker/
+
+      - name: Deploy nginx Config
+        run: |
+          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S cp /home/web/projects/staging/myweb/infra/docker/staging-80.conf /etc/nginx/sites-available/staging-80
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S ln -sf /etc/nginx/sites-available/staging-80 /etc/nginx/sites-enabled/staging-80
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/denny.conf /etc/nginx/sites-enabled/staging
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S chmod -R 755 /home/web/projects/staging/myweb/
+          ENDSSH
+
+      - name: Reload nginx
+        run: |
+          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -t
+            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -s reload
+          ENDSSH
