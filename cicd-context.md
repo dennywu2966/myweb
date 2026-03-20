@@ -69,22 +69,8 @@
 - **Direct IP**: http://123.57.180.180/staging/ ✅ Working
 - **Domain**: http://www.winter-prosper.com/staging/ ❌ ICP blocked
 
-## Commit History
-- `73c614e` - docs: add adc3a6d to history
-- `adc3a6d` - docs: add latest commit to history
-- `2c12b72` - docs: sync commit history
-- `99a8a4d` - docs: update commit history with nginx fixes
-- `8650667` - fix: nginx rewrite to strip /staging prefix
-- `59a00fe` - fix: nginx alias with try_files =404
-- `d451381` - fix: simplify nginx config for proper static file serving
-- `12e77b9` - docs: update commit history with latest commit
-- `9d4ec80` - docs: mark CI/CD as fully operational
-- `41d1028` - ci: use environment-scoped secrets
-- `dbca242` - refactor: cleanup dead code and improve design aesthetics
-- `92f369f` - feat: complete CI/CD pipeline with nginx auto-deploy
-
 ---
 
 **Status: ALL SYSTEMS GO - CI/CD pipeline fully operational.**
 
-**Last verified:** 2026-03-20 00:50 UTC - Deployment successful, site accessible at http://123.57.180.180/staging/
+**Last verified:** 2026-03-20 01:01 UTC - Deployment successful, site accessible at http://123.57.180.180/staging/ (commit: 6e21e4d, 39s build)
