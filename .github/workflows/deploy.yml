@@ -26,7 +26,7 @@ jobs:
       - name: Setup SSH Key for Rsync
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.STAGING_SSH_KEY }}" | base64 -d > ~/.ssh/staging_key
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
           chmod 600 ~/.ssh/staging_key
 
       - name: Ensure Directory Structure Exists
