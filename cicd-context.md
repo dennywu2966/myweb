@@ -70,6 +70,7 @@
 - **Domain**: http://www.winter-prosper.com/staging/ ❌ ICP blocked
 
 ## Commit History
+- `adc3a6d` - docs: add latest commit to history
 - `2c12b72` - docs: sync commit history
 - `99a8a4d` - docs: update commit history with nginx fixes
 - `8650667` - fix: nginx rewrite to strip /staging prefix
