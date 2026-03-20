@@ -11,25 +11,33 @@ const { post } = Astro.props;
 const { title, description, pubDate, tags } = post.data;
 ---
 
-<article class="group">
-  <a href={`${BASE_PATH}/blog/${post.slug}`} class="block py-4">
-    <div class="flex flex-col md:flex-row md:items-baseline md:justify-between gap-2">
-      <h3 class="font-medium group-hover:text-[var(--color-accent)] transition-colors">
+<article class="group py-5">
+  <a href={`${BASE_PATH}/blog/${post.slug}`} class="block">
+    <!-- Title row — editorial style with date aligned right -->
+    <div class="flex items-baseline justify-between gap-4 mb-1.5">
+      <h3 class="text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors duration-200 text-balance">
         {title}
       </h3>
-      <time class="text-sm text-[var(--color-text-muted)] shrink-0">
+      <time
+        class="text-xs text-[var(--color-text-muted)] shrink-0 opacity-70 group-hover:opacity-100 transition-opacity duration-200"
+        datetime={pubDate.toISOString()}
+      >
         {formatDate(pubDate)}
       </time>
     </div>
-    <p class="mt-1 text-sm text-[var(--color-text-muted)] line-clamp-2">
+
+    <!-- Description — muted, readable -->
+    <p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
       {description}
     </p>
+
+    <!-- Meta row — tags + reading time, subtle -->
     {tags && tags.length > 0 && (
-      <div class="mt-2 flex gap-2 text-xs text-[var(--color-text-muted)]">
+      <div class="mt-2.5 flex items-center gap-3 text-xs text-[var(--color-text-muted)] opacity-70">
         {tags.map((tag) => (
-          <span>#{tag}</span>
+          <span class="font-mono">#{tag}</span>
         ))}
-        <span>·</span>
+        <span class="opacity-50">·</span>
         <span>{readingTime(post.body)} 分钟</span>
       </div>
     )}

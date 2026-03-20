@@ -16,57 +16,80 @@ const recentPosts = allPosts
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
 
-const featuredPosts = [...pinnedPosts, ...recentPosts].slice(0, 6);
+const featuredPosts = [...pinnedPosts, ...recentPosts].slice(0, 5);
 
 const notes = (await getCollection('notes'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 5);
+  .slice(0, 4);
 ---
 
 <Base title="Denny | Search, AI infrastructure, engineering systems, and notes.">
-  <div class="max-w-3xl mx-auto px-4 py-12 md:py-20">
+  <div class="max-w-3xl mx-auto px-4 pt-16 pb-20">
+    <!-- Identity + intro — generous whitespace above -->
     <section class="mb-16">
-      <h1 class="text-2xl md:text-3xl font-bold mb-4">Denny</h1>
+      <h1 class="text-3xl font-medium tracking-tight text-[var(--color-text)] mb-5">
+        Denny
+      </h1>
 
-      <div class="space-y-3 text-[var(--color-text-muted)] leading-relaxed">
+      <div class="space-y-3.5 text-[var(--color-text-muted)] leading-relaxed max-w-xl">
         <p>
-          我在做搜索、AI 基础设施和复杂工程系统，也持续记录思考。
+          在做搜索、AI 基础设施和复杂工程系统，也持续记录思考。
           现在主要关注 agent、memory、检索与向量系统，以及 AI-native 的工程方法。
         </p>
         <p>
-          我喜欢把复杂问题拆开、想透、写清楚。
-          这里会放我的文章、notes、项目，以及一些还没有长成正式文章的想法。
+          喜欢把复杂问题拆开、想透、写清楚。
+          这里会放文章、notes、项目，以及一些还没有长成正式文章的想法。
         </p>
       </div>
 
-      <div class="mt-6 flex gap-4 text-sm">
-        <a href={`${BASE_PATH}/about`} class="text-[var(--color-accent)] hover:underline">关于我</a>
-        <a href={`${BASE_PATH}/blog`} class="text-[var(--color-accent)] hover:underline">文章</a>
-        <a href={`${BASE_PATH}/notes`} class="text-[var(--color-accent)] hover:underline">Notes</a>
+      <!-- Simple nav links — not a button bar -->
+      <div class="mt-6 flex gap-5 text-sm text-[var(--color-text-muted)]">
+        <a href={`${BASE_PATH}/about`} class="hover:text-[var(--color-accent)] transition-colors duration-200">关于</a>
+        <a href={`${BASE_PATH}/blog`} class="hover:text-[var(--color-accent)] transition-colors duration-200">文章</a>
+        <a href={`${BASE_PATH}/notes`} class="hover:text-[var(--color-accent)] transition-colors duration-200">Notes</a>
       </div>
     </section>
 
-    <section class="mb-12">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold">精选</h2>
-        <a href={`${BASE_PATH}/blog`} class="text-sm text-[var(--color-accent)] hover:underline">查看全部 →</a>
-      </div>
+    <!-- Divider -->
+    <hr class="border-t border-[var(--color-border)] mb-10" />
+
+    <!-- Selected writing -->
+    <section class="mb-10">
+      <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-1 opacity-60">
+        写作
+      </h2>
       <div class="divide-y divide-[var(--color-border)]">
         {featuredPosts.map((post) => (
           <BlogCard post={post} />
         ))}
       </div>
+      {allPosts.length > 5 && (
+        <div class="mt-4 pt-4">
+          <a
+            href={`${BASE_PATH}/blog`}
+            class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors duration-200"
+          >
+            查看全部 {allPosts.length} 篇 →
+          </a>
+        </div>
+      )}
     </section>
 
+    <!-- Divider -->
+    <hr class="border-t border-[var(--color-border)] mb-10" />
+
+    <!-- Notes stream -->
     <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-semibold">Notes</h2>
-        <a href={`${BASE_PATH}/notes`} class="text-sm text-[var(--color-accent)] hover:underline">查看全部 →</a>
-      </div>
-      <div class="space-y-1">
+      <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-1 opacity-60">
+        Notes
+      </h2>
+      <p class="text-xs text-[var(--color-text-muted)] mb-4 opacity-60">
+        记录正在学习、判断、试验和还没长成正式文章的东西。
+      </p>
+      <div>
         {notes.map((note) => (
           <NoteCard note={note}>
-            {note.body.length > 160 ? note.body.slice(0, 160) + '...' : note.body}
+            {note.body.length > 120 ? note.body.slice(0, 120) + '...' : note.body}
           </NoteCard>
         ))}
       </div>
