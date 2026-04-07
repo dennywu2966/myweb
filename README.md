@@ -129,55 +129,51 @@ url: "https://..." # 可选slides链接
 
 ### 环境
 
-| 环境 | URL | 说明 |
-|------|-----|------|
+| 环境 | URL | 触发方式 |
+|------|-----|----------|
 | 本地开发 | http://localhost:4321 | `bun run dev` |
-| Staging | https://www.winter-prosper.com/staging | main 分支自动部署 |
+| Staging | https://staging.winter-prosper.com | push to `main` |
+| Production | https://www.winter-prosper.com | GitHub Actions 手动触发 |
 
-### GitHub Actions 自动部署
+### 部署架构
 
-PR 合并到 `main` 分支后自动触发部署到 staging 环境。
+同一台 ECS 服务器，两个独立 nginx vhost。每次部署创建带时间戳的 release 目录，通过 symlink 切换，保留最近 5 个版本用于回滚。
 
-#### 需配置的 GitHub Secrets
+```
+/home/web/projects/
+  staging/myweb/
+    current -> releases/20260407-153000/   (symlink)
+    releases/
+  production/myweb/
+    current -> releases/20260407-160000/   (symlink)
+    releases/
+```
 
-| Secret | 说明 | 示例值 |
-|--------|------|--------|
-| `STAGING_HOST` | 服务器地址 | `www.winter-prosper.com` |
-| `STAGING_USER` | SSH 用户名 | `web` |
-| `STAGING_SSH_KEY` | SSH 私钥 | `-----BEGIN OPENSSH PRIVATE KEY-----...` |
+### GitHub Actions
 
-#### 首次部署步骤
+`.github/workflows/deploy.yml` 支持两种触发：
 
-1. SSH 登录服务器：`ssh web@www.winter-prosper.com`
-2. 创建目录：`mkdir -p ~/projects/staging/myweb`
-3. 运行服务器初始化脚本（需要 sudo）：
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/dennywu2966/myweb/main/infra/server-setup.sh | bash
-   ```
-4. 确保域名 proxy 已配置：将 `/staging` 路由到服务器的 port 8080
+- **push to main** → 自动部署 staging（`SITE_URL=https://staging.winter-prosper.com`）
+- **workflow_dispatch** → 手动选择部署 staging 或 production
 
-#### 部署流程
+### GitHub Secrets
 
-1. 创建 PR 并合并到 `main` 分支
-2. GitHub Actions 自动：
-   - 检出代码
-   - 安装 bun 依赖
-   - 构建静态文件 (`dist/`)
-   - 通过 SSH rsync 同步到 `~/projects/staging/myweb/dist/`
-   - 重启 Docker 容器
+需要在 `staging` 和 `production` 两个 environment 中配置：
 
-### Docker 自愈与自启动
+| Secret | 说明 |
+|--------|------|
+| `STAGING_HOST` | 服务器 IP |
+| `STAGING_USER` | SSH 用户名 |
+| `STAGING_SSH_KEY` | SSH 私钥 |
+| `STAGING_SUDO_PASS` | sudo 密码（用于 nginx reload） |
 
-Staging 环境使用 `restart: always` 策略：
-- 服务器重启后容器自动启动
-- 容器崩溃后自动重启
-- 使用 nginx:alpine 镜像，保持轻量
+### 回滚
 
-### 本地手动部署
+SSH 到服务器，将 `current` symlink 指向之前的 release 目录：
 
 ```bash
-# 同步 dist 到 staging 服务器
-rsync -avz --delete ./dist/ web@www.winter-prosper.com:~/projects/staging/myweb/dist/
+ln -sfn /home/web/projects/staging/myweb/releases/<previous-timestamp> /home/web/projects/staging/myweb/current
+sudo nginx -s reload
 ```
 
 ## 功能特性

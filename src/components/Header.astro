@@ -1,13 +1,12 @@
 ---
 import { siteConfig } from '@/lib/config';
-import { BASE_PATH } from '@/lib/base';
 ---
 
 <header class="sticky top-0 z-50 bg-[var(--color-bg)]/95 supports-backdrop-filter:bg-[var(--color-bg)]/80">
   <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
     <!-- Site identity -->
     <a
-      href={BASE_PATH}
+      href="/"
       class="text-[var(--color-text)] font-medium tracking-tight hover:text-[var(--color-accent)] transition-colors duration-200"
       style="font-size: 1.05rem;"
     >
@@ -16,12 +15,12 @@ import { BASE_PATH } from '@/lib/base';
 
     <!-- Desktop navigation — understated links -->
     <nav class="hidden sm:flex items-center gap-5 text-sm">
-      <a href={`${BASE_PATH}/blog`} class="nav-link">文章</a>
-      <a href={`${BASE_PATH}/archive`} class="nav-link">归档</a>
-      <a href={`${BASE_PATH}/projects`} class="nav-link">项目</a>
-      <a href={`${BASE_PATH}/talks`} class="nav-link">演讲</a>
-      <a href={`${BASE_PATH}/notes`} class="nav-link">Notes</a>
-      <a href={`${BASE_PATH}/about`} class="nav-link">关于</a>
+      <a href="/blog" class="nav-link">文章</a>
+      <a href="/archive" class="nav-link">归档</a>
+      <a href="/projects" class="nav-link">项目</a>
+      <a href="/talks" class="nav-link">演讲</a>
+      <a href="/notes" class="nav-link">Notes</a>
+      <a href="/about" class="nav-link">关于</a>
     </nav>
 
     <!-- Right side: theme toggle + mobile menu -->
@@ -61,12 +60,12 @@ import { BASE_PATH } from '@/lib/base';
     class="hidden sm:hidden border-t border-[var(--color-border)]"
   >
     <div class="max-w-3xl mx-auto px-4 py-4 flex flex-col gap-3 text-sm">
-      <a href={`${BASE_PATH}/blog`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">文章</a>
-      <a href={`${BASE_PATH}/archive`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">归档</a>
-      <a href={`${BASE_PATH}/projects`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">项目</a>
-      <a href={`${BASE_PATH}/talks`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">演讲</a>
-      <a href={`${BASE_PATH}/notes`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">Notes</a>
-      <a href={`${BASE_PATH}/about`} class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">关于</a>
+      <a href="/blog" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">文章</a>
+      <a href="/archive" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">归档</a>
+      <a href="/projects" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">项目</a>
+      <a href="/talks" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">演讲</a>
+      <a href="/notes" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">Notes</a>
+      <a href="/about" class="text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors py-1">关于</a>
     </div>
   </nav>
 </header>

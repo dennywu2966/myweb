@@ -3,7 +3,6 @@ import Base from '@/layouts/Base.astro';
 import BlogCard from '@/components/BlogCard.astro';
 import NoteCard from '@/components/NoteCard.astro';
 import { getCollection } from 'astro:content';
-import { BASE_PATH } from '@/lib/base';
 
 const allPosts = await getCollection('blog');
 
@@ -44,9 +43,9 @@ const notes = (await getCollection('notes'))
 
       <!-- Simple nav links — not a button bar -->
       <div class="mt-6 flex gap-5 text-sm text-[var(--color-text-muted)]">
-        <a href={`${BASE_PATH}/about`} class="hover:text-[var(--color-accent)] transition-colors duration-200">关于</a>
-        <a href={`${BASE_PATH}/blog`} class="hover:text-[var(--color-accent)] transition-colors duration-200">文章</a>
-        <a href={`${BASE_PATH}/notes`} class="hover:text-[var(--color-accent)] transition-colors duration-200">Notes</a>
+        <a href="/about" class="hover:text-[var(--color-accent)] transition-colors duration-200">关于</a>
+        <a href="/blog" class="hover:text-[var(--color-accent)] transition-colors duration-200">文章</a>
+        <a href="/notes" class="hover:text-[var(--color-accent)] transition-colors duration-200">Notes</a>
       </div>
     </section>
 
@@ -66,7 +65,7 @@ const notes = (await getCollection('notes'))
       {allPosts.length > 5 && (
         <div class="mt-4 pt-4">
           <a
-            href={`${BASE_PATH}/blog`}
+            href="/blog"
             class="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors duration-200"
           >
             查看全部 {allPosts.length} 篇 →

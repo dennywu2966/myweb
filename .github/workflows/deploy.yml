@@ -1,69 +1,136 @@
-name: Deploy to Staging
+name: Deploy
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 jobs:
-  build-and-deploy:
+  deploy-staging:
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
     runs-on: ubuntu-latest
     environment: staging
+    env:
+      DEPLOY_DIR: /home/web/projects/staging/myweb
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
-
-      - name: Install dependencies
-        run: bun install
-
+      - run: bun install
       - name: Build
         run: bun run build
+        env:
+          SITE_URL: https://staging.winter-prosper.com
 
-      - name: Setup SSH Key for Rsync
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/staging_key
-          chmod 600 ~/.ssh/staging_key
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
 
-      - name: Ensure Directory Structure Exists
+      - name: Create release directory
         run: |
-          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
-            mkdir -p /home/web/projects/staging/myweb/infra/docker
-            mkdir -p /home/web/projects/staging/myweb/dist
-          ENDSSH
+          RELEASE_TS=$(date +%Y%m%d-%H%M%S)
+          echo "RELEASE_TS=${RELEASE_TS}" >> $GITHUB_ENV
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
+            "mkdir -p ${{ env.DEPLOY_DIR }}/releases/${RELEASE_TS}/dist"
 
-      - name: Deploy to Server
+      - name: Upload dist
         run: |
           rsync -avz --delete \
-            -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='node_modules' \
-            --exclude='.astro' \
-            ./dist/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/dist/
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./dist/ \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ env.DEPLOY_DIR }}/releases/${{ env.RELEASE_TS }}/dist/
 
-      - name: Deploy Infrastructure Config
+      - name: Upload infra configs
         run: |
           rsync -avz \
-            -e "ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no" \
-            ./infra/docker/ ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:/home/web/projects/staging/myweb/infra/docker/
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./infra/ \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ env.DEPLOY_DIR }}/infra/
 
-      - name: Deploy nginx Config
+      - name: Swap symlink and reload nginx
         run: |
-          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S cp /home/web/projects/staging/myweb/infra/docker/staging-80.conf /etc/nginx/sites-available/staging-80
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S ln -sf /etc/nginx/sites-available/staging-80 /etc/nginx/sites-enabled/staging-80
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/denny.conf /etc/nginx/sites-enabled/staging
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S chmod -R 755 /home/web/projects/staging/myweb/
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << ENDSSH
+              set -e
+              # Swap release symlink
+              ln -sfn ${{ env.DEPLOY_DIR }}/releases/${{ env.RELEASE_TS }} ${{ env.DEPLOY_DIR }}/current
+              # Prune old releases (keep 5)
+              cd ${{ env.DEPLOY_DIR }}/releases && ls -1dt */ | tail -n +6 | xargs -r rm -rf
+              # Deploy nginx config
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S cp ${{ env.DEPLOY_DIR }}/infra/nginx/staging.conf /etc/nginx/sites-available/staging
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S ln -sf /etc/nginx/sites-available/staging /etc/nginx/sites-enabled/staging
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S rm -f /etc/nginx/sites-enabled/staging-80 /etc/nginx/sites-enabled/default
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -t
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -s reload
           ENDSSH
 
-      - name: Reload nginx
+  deploy-production:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DEPLOY_DIR: /home/web/projects/production/myweb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun install
+      - name: Build
+        run: bun run build
+        env:
+          SITE_URL: https://www.winter-prosper.com
+
+      - name: Setup SSH
         run: |
-          ssh -i ~/.ssh/staging_key -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << 'ENDSSH'
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -t
-            echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -s reload
+          mkdir -p ~/.ssh
+          echo "${{ secrets.STAGING_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Create release directory
+        run: |
+          RELEASE_TS=$(date +%Y%m%d-%H%M%S)
+          echo "RELEASE_TS=${RELEASE_TS}" >> $GITHUB_ENV
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} \
+            "mkdir -p ${{ env.DEPLOY_DIR }}/releases/${RELEASE_TS}/dist"
+
+      - name: Upload dist
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./dist/ \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ env.DEPLOY_DIR }}/releases/${{ env.RELEASE_TS }}/dist/
+
+      - name: Upload infra configs
+        run: |
+          rsync -avz \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./infra/ \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ env.DEPLOY_DIR }}/infra/
+
+      - name: Swap symlink and reload nginx
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} << ENDSSH
+              set -e
+              ln -sfn ${{ env.DEPLOY_DIR }}/releases/${{ env.RELEASE_TS }} ${{ env.DEPLOY_DIR }}/current
+              cd ${{ env.DEPLOY_DIR }}/releases && ls -1dt */ | tail -n +6 | xargs -r rm -rf
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S cp ${{ env.DEPLOY_DIR }}/infra/nginx/production.conf /etc/nginx/sites-available/production
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S ln -sf /etc/nginx/sites-available/production /etc/nginx/sites-enabled/production
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -t
+              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -s reload
           ENDSSH

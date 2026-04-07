@@ -2,7 +2,6 @@
 import Base from '@/layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { formatDateShort } from '@/lib/utils';
-import { BASE_PATH } from '@/lib/base';
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes');
@@ -53,7 +52,7 @@ const { title, date, tags, link } = note.data;
     
     <nav class="mt-12 pt-8 border-t border-[var(--color-border)]">
       <div class="flex justify-between text-sm">
-        <a href={`${BASE_PATH}/notes`} class="text-[var(--color-accent)] hover:underline">
+        <a href="/notes" class="text-[var(--color-accent)] hover:underline">
           ← 返回 Notes
         </a>
       </div>

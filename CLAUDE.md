@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Personal website for a tech lead, built with **Astro 4** + **TypeScript** + **MDX** + **Tailwind CSS**. Content-focused site with blog posts, notes, projects, and talks sections. Site language is `zh-CN`. Deployed to staging via GitHub Actions + Docker + nginx.
+Personal website for a tech lead, built with **Astro 4** + **TypeScript** + **MDX** + **Tailwind CSS**. Content-focused site with blog posts, notes, projects, and talks sections. Site language is `zh-CN`. Deployed via GitHub Actions + nginx on ECS.
 
 **Package manager**: bun (not npm or yarn)
 
@@ -51,9 +51,9 @@ Notes pages do NOT use Post.astro — they render standalone within Base.astro, 
 - **Dynamic routes**: `/blog/[slug].astro`, `/notes/[slug].astro` (use `getStaticPaths()`)
 - **Feeds**: `/rss.xml` (blog), `/notes/rss.xml` (notes), `/sitemap.xml` (custom, not @astrojs/sitemap)
 
-### BASE_PATH
+### Site URL
 
-`src/lib/base.ts` exports `BASE_PATH` (env var, default: `/staging`). This value is used in **all navigation links** throughout the site (`${BASE_PATH}/blog`, etc.) and controls the Astro `site` + `base` config in `astro.config.mjs`.
+`SITE_URL` env var controls the Astro `site` config (default: `https://www.winter-prosper.com`). All navigation links use plain paths (`/blog`, `/notes`). `src/lib/config.ts` reads the site URL via `import.meta.env.SITE`.
 
 ### Theming
 
@@ -113,15 +113,24 @@ import { siteConfig } from '@/lib/config';
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/deploy.yml`): push to `main` → bun build → rsync dist/ to server → reload nginx. Infrastructure in `infra/` (Docker/nginx config, server-setup script).
+Two environments on the same ECS server, differentiated by `SITE_URL` env var at build time:
+
+| Environment | URL | Trigger |
+|-------------|-----|---------|
+| Staging | `https://staging.winter-prosper.com` | Push to `main` |
+| Production | `https://www.winter-prosper.com` | Manual `workflow_dispatch` |
+
+GitHub Actions (`.github/workflows/deploy.yml`): bun build → rsync to timestamped release dir → atomic symlink swap → nginx reload. Keeps last 5 releases for rollback. Nginx configs in `infra/nginx/`.
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
 | `src/content/config.ts` | Zod schemas for all content collections |
-| `src/lib/config.ts` | Site-wide configuration (title, author, social links) |
-| `src/lib/base.ts` | `BASE_PATH` export used in all navigation |
+| `src/lib/config.ts` | Site-wide configuration (title, author, social links, SITE_URL) |
 | `src/lib/utils.ts` | `formatDate`, `formatDateShort` (zh-CN locale), `readingTime` |
-| `astro.config.mjs` | Site URL, base path, MDX + Tailwind integrations, Shiki (github-dark) |
+| `astro.config.mjs` | Site URL (env-driven), MDX + Tailwind integrations, Shiki (github-dark) |
 | `tailwind.config.mjs` | Custom neutral palette, Geist/Noto Sans SC fonts, typography plugin |
+| `infra/nginx/staging.conf` | Nginx vhost for staging.winter-prosper.com |
+| `infra/nginx/production.conf` | Nginx vhost for www.winter-prosper.com |
+| `infra/deploy.sh` | Server-side symlink swap + release pruning |

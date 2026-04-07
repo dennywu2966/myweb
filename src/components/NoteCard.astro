@@ -1,7 +1,6 @@
 ---
 import { formatDateShort } from '@/lib/utils';
 import type { CollectionEntry } from 'astro:content';
-import { BASE_PATH } from '@/lib/base';
 
 interface Props {
   note: CollectionEntry<'notes'>;
@@ -38,7 +37,7 @@ const { title, date, tags, link } = note.data;
           </a>
         ) : (
           <a
-            href={`${BASE_PATH}/notes/${note.slug}`}
+            href={`/notes/${note.slug}`}
             class="text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors duration-200"
           >
             {title}
