@@ -72,7 +72,6 @@ jobs:
               # Deploy nginx config
               echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S cp ${{ env.DEPLOY_DIR }}/infra/nginx/staging.conf /etc/nginx/sites-available/staging
               echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S ln -sf /etc/nginx/sites-available/staging /etc/nginx/sites-enabled/staging
-              echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S rm -f /etc/nginx/sites-enabled/staging-80 /etc/nginx/sites-enabled/default
               echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -t
               echo '${{ secrets.STAGING_SUDO_PASS }}' | sudo -S nginx -s reload
           ENDSSH
