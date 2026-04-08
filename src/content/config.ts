@@ -48,4 +48,16 @@ const talks = defineCollection({
   }),
 });
 
-export const collections = { blog, notes, projects, talks };
+const digest = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    type: z.string(),
+    created: z.coerce.string(),
+    updated: z.coerce.string(),
+    sources: z.array(z.string()).optional(),
+    tags: z.array(z.string()).optional(),
+  }),
+});
+
+export const collections = { blog, notes, projects, talks, digest };

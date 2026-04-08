@@ -1,0 +1,216 @@
+---
+import DigestBase from '@/layouts/DigestBase.astro';
+import ConstellationMap from '@/components/ConstellationMap.astro';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('digest');
+
+// Group by type
+const concepts = entries.filter(e => e.data.type === 'concept').sort((a, b) => a.data.title.localeCompare(b.data.title));
+const summaries = entries.filter(e => e.data.type === 'source-summary').sort((a, b) => a.data.title.localeCompare(b.data.title));
+const others = entries.filter(e => e.data.type !== 'concept' && e.data.type !== 'source-summary').sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<DigestBase title="AI Digest | Denny">
+  <div class="digest-landing">
+    <!-- Hero -->
+    <section class="digest-hero">
+      <h1 class="digest-hero-title">AI Digest</h1>
+      <p class="digest-hero-subtitle">
+        A knowledge base exploring neural architectures, attention mechanisms,
+        and the building blocks of modern deep learning.
+      </p>
+    </section>
+
+    <!-- Constellation Map -->
+    <section class="digest-map-section">
+      <h2 class="digest-section-label">Concept Constellation</h2>
+      <ConstellationMap />
+    </section>
+
+    <!-- Article Lists -->
+    <section class="digest-articles">
+      {summaries.length > 0 && (
+        <div class="digest-group">
+          <h2 class="digest-group-title">
+            <span class="digest-dot digest-dot-gold"></span>
+            Paper Summaries
+          </h2>
+          <div class="digest-list">
+            {summaries.map(entry => (
+              <a href={`/digest/${entry.slug}`} class="digest-item">
+                <span class="digest-item-title">{entry.data.title}</span>
+                {entry.data.tags && (
+                  <span class="digest-item-tags">
+                    {entry.data.tags.slice(0, 3).map(tag => (
+                      <span class="digest-tag">#{tag}</span>
+                    ))}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {concepts.length > 0 && (
+        <div class="digest-group">
+          <h2 class="digest-group-title">
+            <span class="digest-dot digest-dot-indigo"></span>
+            Concepts
+          </h2>
+          <div class="digest-list">
+            {concepts.map(entry => (
+              <a href={`/digest/${entry.slug}`} class="digest-item">
+                <span class="digest-item-title">{entry.data.title}</span>
+                {entry.data.tags && (
+                  <span class="digest-item-tags">
+                    {entry.data.tags.slice(0, 3).map(tag => (
+                      <span class="digest-tag">#{tag}</span>
+                    ))}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {others.length > 0 && (
+        <div class="digest-group">
+          <h2 class="digest-group-title">
+            <span class="digest-dot digest-dot-emerald"></span>
+            Other
+          </h2>
+          <div class="digest-list">
+            {others.map(entry => (
+              <a href={`/digest/${entry.slug}`} class="digest-item">
+                <span class="digest-item-title">{entry.data.title}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+  </div>
+</DigestBase>
+
+<style>
+  .digest-landing {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .digest-hero {
+    text-align: center;
+    padding: 4rem 0 2rem;
+  }
+
+  .digest-hero-title {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: linear-gradient(135deg, #e0e7ff 0%, #818cf8 50%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .digest-hero-subtitle {
+    color: var(--digest-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 32rem;
+    margin: 0 auto;
+  }
+
+  .digest-map-section {
+    padding: 2rem 0;
+  }
+
+  .digest-section-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--digest-text-muted);
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .digest-articles {
+    padding: 2rem 0 4rem;
+  }
+
+  .digest-group {
+    margin-bottom: 2.5rem;
+  }
+
+  .digest-group-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--digest-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--digest-border);
+  }
+
+  .digest-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .digest-dot-gold { background: #fbbf24; box-shadow: 0 0 6px #fbbf2480; }
+  .digest-dot-indigo { background: #818cf8; box-shadow: 0 0 6px #818cf880; }
+  .digest-dot-emerald { background: #34d399; box-shadow: 0 0 6px #34d39980; }
+
+  .digest-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .digest-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .digest-item:hover {
+    background: var(--digest-surface);
+  }
+
+  .digest-item-title {
+    color: var(--digest-text);
+    font-size: 0.95rem;
+    transition: color 0.2s;
+  }
+  .digest-item:hover .digest-item-title {
+    color: var(--digest-accent);
+  }
+
+  .digest-item-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .digest-tag {
+    font-size: 0.7rem;
+    font-family: 'Geist Mono', monospace;
+    color: var(--digest-text-muted);
+    opacity: 0.6;
+  }
+</style>

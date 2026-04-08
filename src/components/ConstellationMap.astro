@@ -1,0 +1,182 @@
+---
+/**
+ * ConstellationMap — SVG concept graph built at build time from wikilink relationships.
+ * Each concept is a "star" node, wikilink references become connecting lines.
+ */
+import { getCollection } from 'astro:content';
+
+interface Node {
+  slug: string;
+  title: string;
+  type: string;
+  x: number;
+  y: number;
+}
+
+interface Edge {
+  from: string;
+  to: string;
+}
+
+// Get all digest entries
+const entries = await getCollection('digest');
+const slugSet = new Set(entries.map(e => e.slug));
+
+// Extract wikilink relationships from content
+const edges: Edge[] = [];
+const wikilinkRegex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+
+for (const entry of entries) {
+  let match;
+  while ((match = wikilinkRegex.exec(entry.body)) !== null) {
+    const target = match[1];
+    if (slugSet.has(target) && target !== entry.slug) {
+      edges.push({ from: entry.slug, to: target });
+    }
+  }
+}
+
+// Deduplicate edges
+const edgeSet = new Set(edges.map(e => [e.from, e.to].sort().join('|')));
+const uniqueEdges = [...edgeSet].map(e => {
+  const [from, to] = e.split('|');
+  return { from, to };
+});
+
+// Layout nodes in a circular pattern with some variation
+const nodeCount = entries.length;
+const cx = 400;
+const cy = 300;
+const radius = 220;
+
+const nodes: Node[] = entries.map((entry, i) => {
+  const angle = (2 * Math.PI * i) / nodeCount - Math.PI / 2;
+  // Add slight randomness for organic feel
+  const r = radius + (i % 3 - 1) * 30;
+  return {
+    slug: entry.slug,
+    title: entry.data.title,
+    type: entry.data.type,
+    x: cx + r * Math.cos(angle),
+    y: cy + r * Math.sin(angle),
+  };
+});
+
+const nodeMap = new Map(nodes.map(n => [n.slug, n]));
+
+// Color by type
+function nodeColor(type: string): string {
+  switch (type) {
+    case 'source-summary': return '#fbbf24'; // gold
+    case 'concept': return '#818cf8'; // indigo
+    case 'comparison': return '#34d399'; // emerald
+    default: return '#818cf8';
+  }
+}
+---
+
+<div class="constellation-container">
+  <svg viewBox="0 0 800 600" class="constellation-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="glow-strong">
+        <feGaussianBlur stdDeviation="6" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    {/* Edges */}
+    {uniqueEdges.map(edge => {
+      const from = nodeMap.get(edge.from);
+      const to = nodeMap.get(edge.to);
+      if (!from || !to) return null;
+      return (
+        <line
+          x1={from.x}
+          y1={from.y}
+          x2={to.x}
+          y2={to.y}
+          stroke="rgba(99, 102, 241, 0.15)"
+          stroke-width="1"
+          class="constellation-edge"
+        />
+      );
+    })}
+
+    {/* Nodes */}
+    {nodes.map(node => (
+      <a href={`/digest/${node.slug}`} class="constellation-node-link">
+        <circle
+          cx={node.x}
+          cy={node.y}
+          r={node.type === 'source-summary' ? 6 : 4}
+          fill={nodeColor(node.type)}
+          filter="url(#glow)"
+          class="constellation-node"
+        />
+        <text
+          x={node.x}
+          y={node.y + 16}
+          text-anchor="middle"
+          fill="var(--digest-text-muted)"
+          font-size="9"
+          class="constellation-label"
+        >
+          {node.title.length > 25 ? node.title.slice(0, 22) + '...' : node.title}
+        </text>
+      </a>
+    ))}
+  </svg>
+</div>
+
+<style>
+  .constellation-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    aspect-ratio: 4/3;
+  }
+
+  .constellation-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .constellation-edge {
+    transition: stroke 0.3s;
+  }
+
+  .constellation-node {
+    cursor: pointer;
+    transition: filter 0.3s, r 0.3s;
+  }
+
+  .constellation-node-link:hover .constellation-node {
+    filter: url(#glow-strong);
+  }
+
+  .constellation-node-link:hover .constellation-edge {
+    stroke: rgba(99, 102, 241, 0.5);
+  }
+
+  .constellation-label {
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+    font-family: 'Geist', system-ui, sans-serif;
+  }
+
+  .constellation-node-link:hover .constellation-label {
+    opacity: 1;
+    fill: var(--digest-text);
+  }
+</style>

@@ -1,0 +1,196 @@
+---
+import DigestBase from '@/layouts/DigestBase.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('digest');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// Extract wikilinks for "related concepts" nav
+const wikilinkRegex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+const allEntries = await getCollection('digest');
+const slugSet = new Set(allEntries.map(e => e.slug));
+const related = new Set<string>();
+let match;
+while ((match = wikilinkRegex.exec(entry.body)) !== null) {
+  const target = match[1];
+  if (slugSet.has(target) && target !== entry.slug) {
+    related.add(target);
+  }
+}
+
+const relatedEntries = allEntries.filter(e => related.has(e.slug));
+---
+
+<DigestBase title={`${entry.data.title} | AI Digest`} description={entry.body.slice(0, 160)}>
+  <article class="digest-article">
+    <header class="digest-article-header">
+      <div class="digest-article-meta">
+        <span class="digest-type-badge">{entry.data.type}</span>
+        {entry.data.created && <time>{entry.data.created}</time>}
+      </div>
+      <h1 class="digest-article-title">{entry.data.title}</h1>
+      {entry.data.tags && entry.data.tags.length > 0 && (
+        <div class="digest-article-tags">
+          {entry.data.tags.map(tag => (
+            <span class="digest-tag">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="digest-prose">
+      <Content />
+    </div>
+
+    {relatedEntries.length > 0 && (
+      <nav class="digest-related">
+        <h2 class="digest-related-title">Related Concepts</h2>
+        <div class="digest-related-list">
+          {relatedEntries.map(r => (
+            <a href={`/digest/${r.slug}`} class="digest-related-link">
+              <span class="digest-related-dot"></span>
+              {r.data.title}
+            </a>
+          ))}
+        </div>
+      </nav>
+    )}
+
+    <nav class="digest-bottom-nav">
+      <a href="/digest" class="digest-back-link">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+        Back to AI Digest
+      </a>
+    </nav>
+  </article>
+</DigestBase>
+
+<style>
+  .digest-article {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1rem 4rem;
+  }
+
+  .digest-article-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .digest-article-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--digest-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .digest-type-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--digest-surface);
+    border: 1px solid var(--digest-border);
+    color: var(--digest-accent);
+  }
+
+  .digest-article-title {
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--digest-text);
+    letter-spacing: -0.01em;
+  }
+
+  .digest-article-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .digest-tag {
+    font-size: 0.75rem;
+    font-family: 'Geist Mono', monospace;
+    color: var(--digest-text-muted);
+  }
+
+  .digest-related {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--digest-border);
+  }
+
+  .digest-related-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--digest-text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .digest-related-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .digest-related-link {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    color: var(--digest-text-muted);
+    background: var(--digest-surface);
+    border: 1px solid var(--digest-border);
+    transition: all 0.2s;
+  }
+  .digest-related-link:hover {
+    color: var(--digest-accent);
+    border-color: var(--digest-accent);
+    box-shadow: 0 0 12px var(--digest-glow);
+  }
+
+  .digest-related-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--digest-accent);
+    box-shadow: 0 0 4px var(--digest-glow);
+  }
+
+  .digest-bottom-nav {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--digest-border);
+  }
+
+  .digest-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--digest-accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .digest-back-link:hover {
+    opacity: 0.8;
+  }
+</style>

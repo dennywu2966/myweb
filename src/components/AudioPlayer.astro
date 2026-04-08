@@ -1,0 +1,169 @@
+---
+/**
+ * AudioPlayer.astro
+ * Floating audio player for the digest sub-site.
+ * Fixed bottom-right, glass morphism style, plays ambient audio on toggle.
+ */
+---
+
+<div class="audio-player" id="audio-player">
+  <audio id="digest-audio" loop preload="none">
+    <source src="/audio/space-ambient.mp3" type="audio/mpeg" />
+  </audio>
+
+  <button
+    id="audio-toggle"
+    type="button"
+    aria-label="Toggle ambient audio"
+    class="audio-btn"
+  >
+    <!-- Planet/music icon — ringed planet with sound waves -->
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <!-- Planet body -->
+      <circle cx="12" cy="12" r="5" fill="currentColor" opacity="0.9" />
+      <!-- Ring -->
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="9"
+        ry="3"
+        stroke="currentColor"
+        stroke-width="1.2"
+        fill="none"
+        transform="rotate(-20 12 12)"
+        opacity="0.6"
+      />
+      <!-- Sound wave arcs (visible when playing, hidden by default) -->
+      <g class="sound-waves" opacity="0">
+        <path
+          d="M19 9.5C20.2 10.5 20.2 13.5 19 14.5"
+          stroke="currentColor"
+          stroke-width="1.2"
+          stroke-linecap="round"
+          fill="none"
+        />
+        <path
+          d="M21 7.5C23 9.5 23 14.5 21 16.5"
+          stroke="currentColor"
+          stroke-width="1.2"
+          stroke-linecap="round"
+          fill="none"
+        />
+      </g>
+    </svg>
+  </button>
+</div>
+
+<style>
+  .audio-player {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+  }
+
+  .audio-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #e0e7ff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .audio-btn:hover {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(99, 102, 241, 0.5);
+    transform: scale(1.05);
+  }
+
+  .audio-btn:focus-visible {
+    outline: 1.5px solid #818cf8;
+    outline-offset: 3px;
+  }
+
+  /* Playing state — blue glow pulse */
+  .audio-player.is-playing .audio-btn {
+    border-color: rgba(99, 102, 241, 0.6);
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  .audio-player.is-playing .sound-waves {
+    opacity: 1;
+    animation: wave-fade 1.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 12px rgba(99, 102, 241, 0.3);
+    }
+    50% {
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 24px rgba(99, 102, 241, 0.5),
+        0 0 48px rgba(99, 102, 241, 0.2);
+    }
+  }
+
+  @keyframes wave-fade {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .audio-player.is-playing .audio-btn {
+      animation: none;
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.3),
+        0 0 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .audio-player.is-playing .sound-waves {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  const player = document.getElementById('audio-player') as HTMLDivElement;
+  const audio = document.getElementById('digest-audio') as HTMLAudioElement;
+  const toggle = document.getElementById('audio-toggle') as HTMLButtonElement;
+
+  toggle.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().then(() => {
+        player.classList.add('is-playing');
+        toggle.setAttribute('aria-label', 'Pause ambient audio');
+      }).catch((err) => {
+        console.warn('Audio playback failed:', err);
+      });
+    } else {
+      audio.pause();
+      player.classList.remove('is-playing');
+      toggle.setAttribute('aria-label', 'Play ambient audio');
+    }
+  });
+
+  audio.addEventListener('ended', () => {
+    player.classList.remove('is-playing');
+    toggle.setAttribute('aria-label', 'Play ambient audio');
+  });
+</script>

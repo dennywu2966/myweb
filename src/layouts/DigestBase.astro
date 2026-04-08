@@ -1,0 +1,129 @@
+---
+import StarField from '@/components/StarField.astro';
+import AudioPlayer from '@/components/AudioPlayer.astro';
+import { siteConfig } from '@/lib/config';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'AI Digest — ML research knowledge base' } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!DOCTYPE html>
+<html lang={siteConfig.lang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href={canonicalURL} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={siteConfig.author} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="digest-body">
+    <StarField />
+
+    <header class="digest-header">
+      <div class="digest-header-inner">
+        <a href="/" class="digest-back">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+          {siteConfig.title}
+        </a>
+        <a href="/digest" class="digest-title-link">AI Digest</a>
+      </div>
+    </header>
+
+    <main class="digest-main">
+      <slot />
+    </main>
+
+    <footer class="digest-footer">
+      <p>&copy; {new Date().getFullYear()} {siteConfig.title} &middot; AI Digest</p>
+    </footer>
+
+    <AudioPlayer />
+  </body>
+</html>
+
+<style is:global>
+  @import '@/styles/global.css';
+  @import '@/styles/digest.css';
+
+  .digest-body {
+    min-height: 100vh;
+    background: var(--digest-bg);
+    color: var(--digest-text);
+    font-family: 'Geist', 'Noto Sans SC', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .digest-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 10, 26, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--digest-border);
+  }
+
+  .digest-header-inner {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .digest-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--digest-text-muted);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .digest-back:hover {
+    color: var(--digest-accent);
+  }
+
+  .digest-title-link {
+    color: var(--digest-text);
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .digest-title-link:hover {
+    color: var(--digest-accent);
+  }
+
+  .digest-main {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .digest-footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.75rem;
+    color: var(--digest-text-muted);
+    opacity: 0.6;
+  }
+</style>

@@ -1,0 +1,291 @@
+/**
+ * digest.css
+ * CSS custom properties and styles for the digest sub-site.
+ * Scoped via class-based selectors to avoid affecting the main site.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Digest theme variables — used by digest pages only                 */
+/* ------------------------------------------------------------------ */
+:root {
+  --digest-bg: #0a0a1a;
+  --digest-surface: rgba(15, 23, 42, 0.8);
+  --digest-text: #e0e7ff;
+  --digest-text-muted: #94a3b8;
+  --digest-accent: #818cf8;
+  --digest-accent-hover: #a78bfa;
+  --digest-border: rgba(99, 102, 241, 0.2);
+  --digest-glow: rgba(99, 102, 241, 0.4);
+}
+
+/* ------------------------------------------------------------------ */
+/* Prose — article content styled for the space theme                 */
+/* ------------------------------------------------------------------ */
+.digest-prose {
+  color: var(--digest-text);
+  line-height: 1.8;
+  font-size: 1.0625rem; /* 17px — comfortable reading */
+}
+
+.digest-prose h1,
+.digest-prose h2,
+.digest-prose h3,
+.digest-prose h4,
+.digest-prose h5,
+.digest-prose h6 {
+  color: #f1f5f9;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+}
+
+.digest-prose h1 { font-size: 2rem; }
+.digest-prose h2 { font-size: 1.5rem; }
+.digest-prose h3 { font-size: 1.25rem; }
+
+.digest-prose p {
+  margin-bottom: 1.25em;
+}
+
+.digest-prose a {
+  color: var(--digest-accent);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.digest-prose a:hover {
+  color: var(--digest-accent-hover);
+  border-color: var(--digest-accent-hover);
+}
+
+.digest-prose strong {
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+.digest-prose em {
+  color: var(--digest-text-muted);
+}
+
+.digest-prose blockquote {
+  border-left: 2px solid var(--digest-accent);
+  background: var(--digest-surface);
+  padding: 1rem 1.25rem;
+  margin: 1.5em 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+  color: var(--digest-text-muted);
+  font-style: normal;
+}
+
+.digest-prose code {
+  background: rgba(15, 23, 42, 0.9);
+  color: #c4b5fd;
+  padding: 0.15em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: 'Geist Mono', 'Fira Code', monospace;
+}
+
+.digest-prose pre {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--digest-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.digest-prose pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+  color: var(--digest-text);
+}
+
+.digest-prose ul,
+.digest-prose ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.25em;
+}
+
+.digest-prose li {
+  margin-bottom: 0.5em;
+}
+
+.digest-prose li::marker {
+  color: var(--digest-accent);
+}
+
+.digest-prose hr {
+  border: none;
+  border-top: 1px solid var(--digest-border);
+  margin: 2em 0;
+}
+
+.digest-prose img {
+  border-radius: 0.5rem;
+  border: 1px solid var(--digest-border);
+  margin: 1.5em 0;
+}
+
+.digest-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+.digest-prose th,
+.digest-prose td {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--digest-border);
+  text-align: left;
+}
+
+.digest-prose th {
+  background: var(--digest-surface);
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------------ */
+/* Card — glass morphism panels                                       */
+/* ------------------------------------------------------------------ */
+.digest-card {
+  background: var(--digest-surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--digest-border);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.digest-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 24px rgba(99, 102, 241, 0.1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Link — accent-colored with glow on hover                           */
+/* ------------------------------------------------------------------ */
+.digest-link {
+  color: var(--digest-accent);
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.digest-link:hover {
+  color: var(--digest-accent-hover);
+  text-shadow: 0 0 12px var(--digest-glow);
+}
+
+.digest-link:focus-visible {
+  outline: 1.5px solid var(--digest-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Utility classes for the space theme                                 */
+/* ------------------------------------------------------------------ */
+
+/* Full-page digest background */
+.digest-bg {
+  background-color: var(--digest-bg);
+  color: var(--digest-text);
+  min-height: 100vh;
+}
+
+/* Muted secondary text */
+.digest-muted {
+  color: var(--digest-text-muted);
+}
+
+/* Accent-colored text */
+.digest-accent {
+  color: var(--digest-accent);
+}
+
+/* Subtle divider line */
+.digest-divider {
+  border: none;
+  border-top: 1px solid var(--digest-border);
+}
+
+/* Glow effect for emphasis elements */
+.digest-glow {
+  box-shadow: 0 0 16px var(--digest-glow);
+}
+
+/* Rounded badge/tag for categories */
+.digest-tag {
+  display: inline-block;
+  padding: 0.2em 0.65em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--digest-accent);
+  border: 1px solid var(--digest-border);
+  letter-spacing: 0.03em;
+}
+
+/* Soft text selection for digest pages */
+.digest-bg ::selection {
+  background-color: var(--digest-accent);
+  color: var(--digest-bg);
+}
+
+/* Container with max-width for readable content */
+.digest-container {
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Section spacing */
+.digest-section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+/* Heading with bottom accent line */
+.digest-heading {
+  color: #f1f5f9;
+  letter-spacing: -0.02em;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.digest-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  background: var(--digest-accent);
+  border-radius: 1px;
+}
+
+/* Animated gradient border for featured content */
+.digest-featured {
+  position: relative;
+  border-radius: 0.75rem;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.4),
+    rgba(167, 139, 250, 0.2),
+    rgba(99, 102, 241, 0.4)
+  );
+}
+
+.digest-featured > * {
+  background: var(--digest-bg);
+  border-radius: calc(0.75rem - 1px);
+}
