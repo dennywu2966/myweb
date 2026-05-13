@@ -13,6 +13,7 @@ export async function GET(context) {
     { url: `${siteUrl}/blog`, lastmod: new Date(), priority: '0.8' },
     { url: `${siteUrl}/archive`, lastmod: new Date(), priority: '0.7' },
     { url: `${siteUrl}/projects`, lastmod: new Date(), priority: '0.7' },
+    { url: `${siteUrl}/services`, lastmod: new Date(), priority: '0.8' },
     { url: `${siteUrl}/talks`, lastmod: new Date(), priority: '0.7' },
     { url: `${siteUrl}/notes`, lastmod: new Date(), priority: '0.8' },
     { url: `${siteUrl}/uses`, lastmod: new Date(), priority: '0.5' },
