@@ -31,6 +31,8 @@ const notFits = [
   '需要长期代运营、投资建议或收益承诺',
   '需求很大但预算只覆盖一个小切片',
 ];
+
+const paypalPaymentUrl = 'https://paypal.me/ZuodongWu/10USD?locale.x=en_US&country.x=US';
 ---
 
 <Base
@@ -120,8 +122,24 @@ const notFits = [
         </a>
         ，标题写“10 USD micro service”，正文贴输入材料和你想要的输出。
       </p>
+      <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <a
+          href={paypalPaymentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center border border-[var(--color-border)] bg-[var(--color-text)] px-4 py-2.5 text-sm font-medium text-[var(--color-bg)] hover:opacity-90 transition-opacity"
+        >
+          PayPal 支付 10 USD
+        </a>
+        <a
+          href={`mailto:${siteConfig.email}?subject=10%20USD%20micro%20service`}
+          class="inline-flex items-center justify-center border border-[var(--color-border)] px-4 py-2.5 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-surface)] transition-colors"
+        >
+          先发邮件确认
+        </a>
+      </div>
       <p class="text-xs text-[var(--color-text-muted)] leading-relaxed opacity-80">
-        不承诺投资收益，不处理登录、付款、身份证件或其他需要本人授权的动作。
+        支付前请先确认任务范围。不承诺投资收益，不处理登录、身份证件或其他需要本人授权的动作。
       </p>
     </section>
 
@@ -133,7 +151,8 @@ const notFits = [
         <p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
           我现在接 10 美金起的小型工程服务：脚本自动化、表格清洗、AI 工作流整理、
           README/部署说明/报错定位。适合 30-60 分钟能收口的小问题。把输入材料和想要的结果发我，
-          我先判断能不能做成一个明确交付物。
+          我先判断能不能做成一个明确交付物。确认后可通过 PayPal 支付 10 USD：
+          {paypalPaymentUrl}
         </p>
       </div>
     </section>
