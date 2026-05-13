@@ -3,6 +3,7 @@ title: "10 USD 起的小型工程服务"
 description: "一个适合 30-60 分钟收口的小服务入口：脚本自动化、表格清洗、AI 工作流整理、README/部署说明和小报错定位。"
 pubDate: 2026-05-13
 tags: ["service", "automation", "AI", "engineering"]
+heroImage: "/og-micro-service.png"
 ---
 
 有些问题不值得开一个正式项目，但会真实卡住半天：一个重复的文件处理步骤、一份乱掉的表格、一段报错、一套临时 prompt、一个写不清楚的 README 或部署说明。

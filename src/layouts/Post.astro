@@ -8,10 +8,10 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, pubDate, tags, pinned } = post.data;
+const { title, description, pubDate, tags, pinned, heroImage } = post.data;
 ---
 
-<Base title={`${title} | Denny`} description={description}>
+<Base title={`${title} | Denny`} description={description} ogImage={heroImage} article>
   <article class="max-w-3xl mx-auto px-4 py-12">
     {pinned && (
       <div class="mb-6 text-sm text-[var(--color-accent)] font-medium">
