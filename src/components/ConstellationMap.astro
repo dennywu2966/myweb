@@ -20,7 +20,7 @@ interface Edge {
 
 // Get all digest entries
 const entries = await getCollection('digest');
-const slugSet = new Set(entries.map(e => e.slug));
+const slugSet = new Set<string>(entries.map(e => e.slug));
 
 // Extract wikilink relationships from content
 const edges: Edge[] = [];

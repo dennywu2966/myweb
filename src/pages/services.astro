@@ -1,0 +1,141 @@
+---
+import Base from '@/layouts/Base.astro';
+import { siteConfig } from '@/lib/config';
+
+const serviceItems = [
+  {
+    title: '小脚本和自动化',
+    description: '把重复的文件处理、表格清洗、网页数据整理或命令行步骤做成可复用脚本。',
+    deliverable: '一个可运行脚本、一份使用说明、一次小范围修正',
+  },
+  {
+    title: 'AI 工作流整理',
+    description: '把临时提示词、手工步骤、Agent 操作流程整理成稳定可复用的清单或模板。',
+    deliverable: '一份结构化工作流、提示词模板、输入输出示例',
+  },
+  {
+    title: '代码和文档急救',
+    description: '帮你看一个小报错、README、部署说明、PR 描述或技术文档，让它能交付给别人。',
+    deliverable: '修正后的文本或补丁、问题解释、后续检查点',
+  },
+];
+
+const goodFits = [
+  '任务能在 30-60 分钟内收口',
+  '输入材料明确，例如一段报错、一个表格、一个目录或一份草稿',
+  '结果可以用文件、补丁、模板或说明文档交付',
+];
+
+const notFits = [
+  '需要登录你的账号或处理敏感身份信息',
+  '需要长期代运营、投资建议或收益承诺',
+  '需求很大但预算只覆盖一个小切片',
+];
+---
+
+<Base
+  title="服务 | Denny"
+  description="10 美金起的小型工程、自动化和 AI 工作流服务。"
+>
+  <div class="max-w-3xl mx-auto px-4 pt-12 pb-20">
+    <header class="mb-12">
+      <p class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-4 opacity-70">
+        Services
+      </p>
+      <h1 class="text-3xl font-medium tracking-tight text-[var(--color-text)] mb-5">
+        10 美金起的小型工程服务
+      </h1>
+      <div class="space-y-3.5 text-[var(--color-text-muted)] leading-relaxed max-w-2xl">
+        <p>
+          适合那些不值得开一个正式项目、但卡住你半天的小问题：
+          小脚本、数据清洗、AI 工作流、README、部署说明、报错定位。
+        </p>
+        <p>
+          目标是快速收口：明确输入、明确交付物、能在一次异步沟通里完成。
+        </p>
+      </div>
+    </header>
+
+    <section class="mb-12">
+      <div class="border-y border-[var(--color-border)] divide-y divide-[var(--color-border)]">
+        {serviceItems.map((item) => (
+          <article class="py-6">
+            <h2 class="text-lg font-medium text-[var(--color-text)] mb-2">
+              {item.title}
+            </h2>
+            <p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-3">
+              {item.description}
+            </p>
+            <p class="text-xs text-[var(--color-text-muted)] leading-relaxed">
+              <span class="text-[var(--color-text)]">交付：</span>{item.deliverable}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="grid gap-8 sm:grid-cols-2 mb-12">
+      <div>
+        <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-4 opacity-70">
+          适合
+        </h2>
+        <ul class="space-y-2 text-sm text-[var(--color-text-muted)]">
+          {goodFits.map((item) => (
+            <li class="leading-relaxed">{item}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-4 opacity-70">
+          不适合
+        </h2>
+        <ul class="space-y-2 text-sm text-[var(--color-text-muted)]">
+          {notFits.map((item) => (
+            <li class="leading-relaxed">{item}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-5 mb-12">
+      <h2 class="text-base font-medium text-[var(--color-text)] mb-3">
+        价格和流程
+      </h2>
+      <ol class="space-y-2 text-sm text-[var(--color-text-muted)]">
+        <li>1. 你发来问题、输入材料和期望结果。</li>
+        <li>2. 我确认是否能在一个小切片内完成。</li>
+        <li>3. 10 美金起，先交付可检查结果，再根据范围决定是否继续。</li>
+      </ol>
+    </section>
+
+    <section class="mb-12">
+      <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-4 opacity-70">
+        联系
+      </h2>
+      <p class="text-sm text-[var(--color-text-muted)] leading-relaxed mb-4">
+        发邮件到
+        <a class="text-[var(--color-accent)] hover:text-[var(--color-accent-hover)]" href={`mailto:${siteConfig.email}?subject=10%20USD%20micro%20service`}>
+          {siteConfig.email}
+        </a>
+        ，标题写“10 USD micro service”，正文贴输入材料和你想要的输出。
+      </p>
+      <p class="text-xs text-[var(--color-text-muted)] leading-relaxed opacity-80">
+        不承诺投资收益，不处理登录、付款、身份证件或其他需要本人授权的动作。
+      </p>
+    </section>
+
+    <section>
+      <h2 class="text-xs font-medium uppercase tracking-widest text-[var(--color-text-muted)] mb-4 opacity-70">
+        可直接转发的文案
+      </h2>
+      <div class="border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <p class="text-sm text-[var(--color-text-muted)] leading-relaxed">
+          我现在接 10 美金起的小型工程服务：脚本自动化、表格清洗、AI 工作流整理、
+          README/部署说明/报错定位。适合 30-60 分钟能收口的小问题。把输入材料和想要的结果发我，
+          我先判断能不能做成一个明确交付物。
+        </p>
+      </div>
+    </section>
+  </div>
+</Base>

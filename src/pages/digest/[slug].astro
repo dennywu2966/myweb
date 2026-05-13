@@ -16,7 +16,7 @@ const { Content } = await entry.render();
 // Extract wikilinks for "related concepts" nav
 const wikilinkRegex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
 const allEntries = await getCollection('digest');
-const slugSet = new Set(allEntries.map(e => e.slug));
+const slugSet = new Set<string>(allEntries.map(e => e.slug));
 const related = new Set<string>();
 let match;
 while ((match = wikilinkRegex.exec(entry.body)) !== null) {
